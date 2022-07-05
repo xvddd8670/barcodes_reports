@@ -1,0 +1,22 @@
+{
+    "main": {
+		"test_mode": true
+	},
+	"mysql": {
+		"host_to_mysql": "mx1.droma.me",
+		"user_to_mysql": "c3zlicenia",
+		"password_to_mysql": "222-Droma-222",
+		"database_name_to_mysql": "c3dane_skanowania",
+		"table_scan_all_for_test_mode": "scan_all_test",
+		"table_scan_all": "scan_all",
+		"table_workplace_data_for_test_mode": "workplace_data_test",
+		"table_workplace_data": "workplace_data"
+    },
+	"email": {
+		"addr_from": "glpi@sunshade-experts.com",
+		"password": "JwZE%#%vrvDe",
+		"addr_to": "dmytro.yankevych@sunshade-experts.com",
+		"server": "wn30.webd.pl",
+		"port": 587
+	}
+}
