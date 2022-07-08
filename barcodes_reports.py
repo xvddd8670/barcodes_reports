@@ -34,7 +34,7 @@ else:
 
 
 #date_now = datetime.date.today().strftime('%Y-%m-%d')
-date_now = '2022-07-01'
+date_now = '2022-07-06'
 time_now = datetime.datetime.now().time().strftime('%H:%M:%S')
 
 
@@ -60,12 +60,6 @@ console = Console()
 file_to_output = open('report.txt', 'w', encoding='ascii')
 file_console = Console(file=file_to_output)
 
-##
-#db_cursor.execute("SELECT COUNT(numer) FROM "+workplace_data+" WHERE time<='22:10:00' and date='"+date_now+"' and open_close=0")
-#rows = db_cursor.fetchall()
-#print(rows[0][0])
-##
-
 db_cursor.execute("SELECT COUNT(numer) FROM "+scan_all+" WHERE time<='22:10:00' and date='"+date_now+"' and open_close=0")
 rows = db_cursor.fetchall()
 file_console.print('count scan all = '+str(rows[0][0]))
@@ -87,17 +81,21 @@ rows = db_cursor.fetchall()
 
 #xlsx init
 workbook = xlsxwriter.Workbook('report.xlsx')
-worksheet_close_in_workplace = workbook.add_worksheet('close in workplace')
-worksheet_close_in_workplace.set_column(0, 0, 20)
 ##
 bold = workbook.add_format({'bold': True})
 bold.set_bg_color('green')
-##
+#close_in_workplace
+worksheet_close_in_workplace = workbook.add_worksheet('close in workplace')
+worksheet_close_in_workplace.set_column(0, 0, 15)
+worksheet_close_in_workplace.set_column(6, 6, 13)
+
 worksheet_close_in_workplace.write(0, 0, 'numer', bold)
 worksheet_close_in_workplace.write(0, 1, 'time', bold)
 worksheet_close_in_workplace.write(0, 2, 'position', bold)
 worksheet_close_in_workplace.write(0, 3, 'count', bold)
 worksheet_close_in_workplace.write(0, 4, 'type', bold)
+worksheet_close_in_workplace.write(0, 5, 'worker', bold)
+worksheet_close_in_workplace.write(0, 6, 'time summary', bold)
 
 i_in_while = 0
 while i_in_while < len(rows):
@@ -106,13 +104,17 @@ while i_in_while < len(rows):
     worksheet_close_in_workplace.write(i_in_while+1, 2, rows[i_in_while][4])
     worksheet_close_in_workplace.write(i_in_while+1, 3, rows[i_in_while][5])
     worksheet_close_in_workplace.write(i_in_while+1, 4, str(rows[i_in_while][6]))
+    worksheet_close_in_workplace.write(i_in_while+1, 5, rows[i_in_while][7])
+    worksheet_close_in_workplace.write(i_in_while+1, 6, str(rows[i_in_while][8]))
     i_in_while += 1
 
+#close_in_scan_all
 worksheet_close_in_scan_all = workbook.add_worksheet('close in scan all')
 worksheet_close_in_scan_all.set_column(0, 0, 20)
 worksheet_close_in_scan_all.write(0, 0, 'numer', bold)
 worksheet_close_in_scan_all.write(0, 1, 'time', bold)
 
+##
 db_cursor.execute("SELECT * FROM "+scan_all+" WHERE time<='22:10:00' and date='"+date_now+"' and open_close=1")
 rows = db_cursor.fetchall()
 
@@ -123,40 +125,34 @@ while i_in_while < len(rows):
     i_in_while += 1
 
 workbook.close()
-####
+##
 file_to_output.close()
 
-file_to_print = open('report.txt', 'r')
-console.print(file_to_print.read())
-file_to_print.close()
+#mail
+file_to_output = open('report.txt', 'r')
+str_to_mail = file_to_output.read()
+file_to_output.close()
 ##
-
-##mail
-#file_to_output = open('report.txt', 'r')
-#str_to_mail = file_to_output.read()
-#file_to_output.close()
-###
-#msg = MIMEMultipart()
-#msg['From'] = config['email']['addr_from']
-#msg['To'] = config['email']['addr_to']
-###
-#email = smtplib.SMTP('wn30.webd.pl', 587)
-#email.starttls()
-#email.login(config['email']['addr_from'], config['email']['password'])
-###
-#msg.attach(MIMEText(str_to_mail, 'plain'))#<--
-###
-#part = MIMEBase('application', "octet-stream")
-#part.set_payload(open("report.xlsx", "rb").read())
-#encoders.encode_base64(part)
-#part.add_header('Content-Disposition', 'attachment; filename="repot.xlsx"')
-#msg.attach(part)
-###
-#msg['Subject'] = 'subject'
-#email.send_message(msg)
-###
-#email.quit()
-
+msg = MIMEMultipart()
+msg['From'] = config['email']['addr_from']
+msg['To'] = config['email']['addr_to']
+##
+email = smtplib.SMTP('wn30.webd.pl', 587)
+email.starttls()
+email.login(config['email']['addr_from'], config['email']['password'])
+##
+msg.attach(MIMEText(str_to_mail, 'plain'))#<--
+##
+part = MIMEBase('application', "octet-stream")
+part.set_payload(open("report.xlsx", "rb").read())
+encoders.encode_base64(part)
+part.add_header('Content-Disposition', 'attachment; filename="repot.xlsx"')
+msg.attach(part)
+##
+msg['Subject'] = 'subject'
+email.send_message(msg)
+##
+email.quit()
 
 db_connection.close()
 
