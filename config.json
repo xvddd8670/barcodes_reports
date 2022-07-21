@@ -1,6 +1,6 @@
 {
     "main": {
-		"test_mode": true
+		"test_mode": false 
 	},
 	"mysql": {
 		"host_to_mysql": "mx1.droma.me",
@@ -13,9 +13,9 @@
 		"table_workplace_data": "workplace_data"
     },
 	"email": {
-		"addr_from": "glpi@sunshade-experts.com",
-		"password": "JwZE%#%vrvDe",
-		"addr_to": "dmytro.yankevych@sunshade-experts.com",
+		"addr_from": "mail.automat@sunshade-experts.com",
+		"password": "D7AU0dbcE@Il",
+		"addr_to": "dmytro.yankevych@sunshade-experts.com, tymoteusz.rduch@sunshade-experts.com",
 		"server": "wn30.webd.pl",
 		"port": 587
 	}
